@@ -3,20 +3,24 @@
   (:require [cascalog.tap :as tap]
             [cascalog.vars :as v]
             [cascalog.workflow :as w])
-  (:import [cascading.scheme TextDelimited WritableSequenceFile]
+  (:import [cascading.scheme.hadoop TextDelimited WritableSequenceFile]
            [cascading.tuple Fields]
            [org.pingles.cascading.protobuf ProtobufSequenceFileScheme]))
 
 (defn- delimited
-  [field-seq delim & {:keys [classes skip-header?]}]
+  [field-seq delim & {:keys [classes quote skip-header?]}]
   (let [skip-header? (boolean skip-header?)
         field-seq    (w/fields field-seq)
         field-seq    (if (and classes (not (.isDefined field-seq)))
                        (w/fields (v/gen-nullable-vars (count classes)))
                        field-seq)]
-    (if classes
-      (TextDelimited. field-seq skip-header? delim (into-array classes))
-      (TextDelimited. field-seq skip-header? delim))))
+    (cond (and quote classes)
+          (TextDelimited. field-seq skip-header? delim quote (into-array classes))
+          (and quote (not classes))
+          (TextDelimited. field-seq skip-header? delim quote)
+          (and classes (not quote))
+          (TextDelimited. field-seq skip-header? delim (into-array classes))
+          :else (TextDelimited. field-seq skip-header? delim))))
 
 (defn hfs-delimited
   "Creates a tap on HDFS using Cascading's TextDelimited
@@ -30,7 +34,7 @@
    See http://www.cascading.org/javadoc/cascading/tap/Hfs.html and
    http://www.cascading.org/javadoc/cascading/scheme/TextDelimited.html"
   [path & opts]
-  (let [{:keys [outfields delimiter]} (apply array-map opts)
+  (let [{:keys [outfields delimiter quote]} (apply array-map opts)
         scheme (apply delimited
                       (or outfields Fields/ALL)
                       (or delimiter "\t")

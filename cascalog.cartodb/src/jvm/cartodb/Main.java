@@ -45,6 +45,6 @@ public class Main {
         Flow flow = flowConnector.connect(flowDef);
 
         flow.writeDOT("/home/eighty/cdb.dot");
-        //flow.complete();
+        flow.complete();
     }
 }

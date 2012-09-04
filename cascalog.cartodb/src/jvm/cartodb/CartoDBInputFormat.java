@@ -37,7 +37,7 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
     @Override
     public RecordReader<Text, Text> getRecordReader(InputSplit split,
             JobConf job, Reporter reporter) throws IOException {
-        return new CartoDBRecordReader((DBInputSplit) split, job);
+        return new CartoDBRecordReader((CartoDBInputSplit) split, job);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
         int splitSize = count / splitCount;
         InputSplit[] splits = new InputSplit[splitSize];
         for (int i = 0; i < splitCount; i++) {
-            splits[i] = new DBInputSplit(sql, splitSize, i * splitSize);
+            splits[i] = new CartoDBInputSplit(sql, splitSize, i * splitSize);
         }
         return splits;
     }
@@ -69,15 +69,15 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
                 params), "UTF-8");
     }
 
-    static class DBInputSplit implements InputSplit {
+    static class CartoDBInputSplit implements InputSplit {
         String sql;
         long limit;
         long offset;
 
-        public DBInputSplit() {
+        public CartoDBInputSplit() {
         }
 
-        DBInputSplit(String sql, long limit, long offset) {
+        CartoDBInputSplit(String sql, long limit, long offset) {
             this.sql = sql;
             this.limit = limit;
             this.offset = offset;
@@ -111,11 +111,11 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
     protected class CartoDBRecordReader implements RecordReader<Text,
             Text> {
         private JobConf job;
-        private DBInputSplit split;
+        private CartoDBInputSplit split;
         private UnmodifiableIterator<String> records;
         private long pos;
 
-        CartoDBRecordReader(DBInputSplit split, JobConf job) throws IOException {
+        CartoDBRecordReader(CartoDBInputSplit split, JobConf job) throws IOException {
             this.split = split;
             this.job = job;
             String sqlQuery = URLEncoder.encode(job.get("sql"), "UTF-8");
@@ -127,7 +127,7 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
                     .iterator();
         }
 
-        private String getSql(DBInputSplit split) {
+        private String getSql(CartoDBInputSplit split) {
             return Joiner.on(" ").join(split.sql, "LIMIT", split.limit,
                     "OFFSET", split.offset);
         }

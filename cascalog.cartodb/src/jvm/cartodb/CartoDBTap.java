@@ -26,7 +26,6 @@ public class CartoDBTap extends SourceTap<JobConf, RecordReader> {
     public static final CartoDBTap create(CartoDBScheme scheme, String account,
             String apiKey, String sql, String sqlCount) throws
             CartoDBException {
-        LOGGER.info("YES");
         Preconditions.checkNotNull(account, "account is required.");
         Preconditions.checkNotNull(apiKey, "apiKey is required.");
         Preconditions.checkNotNull(sql, "sql is required.");
@@ -57,7 +56,6 @@ public class CartoDBTap extends SourceTap<JobConf, RecordReader> {
     public TupleEntryIterator openForRead(
             FlowProcess<JobConf> jobConfFlowProcess,
             RecordReader recordReader) throws IOException {
-        LOGGER.info("openForRead");
         return new HadoopTupleEntrySchemeIterator(jobConfFlowProcess, this,
                 recordReader);
     }
@@ -71,12 +69,10 @@ public class CartoDBTap extends SourceTap<JobConf, RecordReader> {
     public void sourceConfInit(FlowProcess<JobConf> process, JobConf conf) {
         FileInputFormat.setInputPaths(conf, "http://" + account + ".cartodb" +
                 ".com");
-        LOGGER.info("sourceConfInit");
         conf.set("account", account);
         conf.set("apiKey", apiKey);
         conf.set("sql", sql);
         conf.set("sqlCount", sqlCount);
-        LOGGER.info("sourceConfInit done");
         super.sourceConfInit(process, conf);
     }
 }

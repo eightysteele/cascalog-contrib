@@ -83,6 +83,10 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
             this.offset = offset;
         }
 
+        public long getLimit() {
+            return limit;
+        }
+
         @Override
         public long getLength() throws IOException {
             return limit;
@@ -95,14 +99,14 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
 
         @Override
         public void readFields(DataInput in) throws IOException {
-            sql = in.readUTF();
+            sql = Text.readString(in);//in.readUTF();
             offset = in.readLong();
             limit = in.readLong();
         }
 
         @Override
         public void write(DataOutput out) throws IOException {
-            out.writeChars(sql);
+            Text.writeString(out, sql);
             out.writeLong(offset);
             out.writeLong(limit);
         }
@@ -125,11 +129,6 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
                     ".cartodb" + ".com/api/v1/sql" + "?" + params), "UTF-8");
             records = ImmutableList.copyOf(Splitter.on("\n").split(response))
                     .iterator();
-        }
-
-        private String getSql(CartoDBInputSplit split) {
-            return Joiner.on(" ").join(split.sql, "LIMIT", split.limit,
-                    "OFFSET", split.offset);
         }
 
         @Override
@@ -155,6 +154,11 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
         @Override
         public float getProgress() throws IOException {
             return pos / (float) split.limit;
+        }
+
+        private String getSql(CartoDBInputSplit split) {
+            return Joiner.on(" ").join(split.sql, "LIMIT", split.limit,
+                    "OFFSET", split.offset);
         }
 
         @Override

@@ -18,4 +18,3 @@
     (?<- (stdout)         
          [?line]
          (source ?line))))
-

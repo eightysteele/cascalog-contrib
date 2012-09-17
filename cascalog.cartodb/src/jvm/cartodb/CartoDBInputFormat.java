@@ -53,7 +53,7 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
         }
         String sql = job.get("sql");
         int splitSize = count / splitCount;
-        InputSplit[] splits = new InputSplit[splitSize];
+        InputSplit[] splits = new InputSplit[splitCount];
         for (int i = 0; i < splitCount; i++) {
             splits[i] = new CartoDBInputSplit(sql, splitSize, i * splitSize);
         }
@@ -95,14 +95,14 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
 
         @Override
         public void readFields(DataInput in) throws IOException {
-            sql = Text.readString(in);
+            sql = in.readUTF();
             offset = in.readLong();
             limit = in.readLong();
         }
 
         @Override
         public void write(DataOutput out) throws IOException {
-            Text.writeString(out, sql);
+            out.writeChars(sql);
             out.writeLong(offset);
             out.writeLong(limit);
         }

@@ -23,15 +23,9 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
         Text> {
     private static final Logger LOG = Logger.getLogger(CartoDBInputFormat.class);
 
-    /**
-     * Configure MapReduce job by creating CartoDB client with account and
-     * API Key supplied by the JobConf.
-     *
-     * @param job The JobConf
-     */
-    @Override
+
     public void configure(JobConf job) {
-        // NOP
+        job.setInputFormat(CartoDBInputFormat.class);
     }
 
     @Override

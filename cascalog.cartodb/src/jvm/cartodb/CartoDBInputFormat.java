@@ -39,13 +39,13 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
             IOException {
         int count = 0;
         try {
-            String sql = job.get("sqlCount");
+            String sql = job.get("cascalog.cartodb.sqlCount");
             String response = query(job);
             count = Integer.parseInt(response.split("\n")[1]);
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
-        String sql = job.get("sql");
+        String sql = job.get("cascalog.cartodb.sql");
         int splitSize = count / splitCount;
         InputSplit[] splits = new InputSplit[splitCount];
         for (int i = 0; i < splitCount; i++) {
@@ -55,8 +55,10 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
     }
 
     private String query(JobConf job) throws Exception {
-        String sqlQuery = URLEncoder.encode(job.get("sqlCount"), "UTF-8");
-        String params = "q=" + sqlQuery + "&api_key=" + job.get("apiKey")
+        String sqlQuery = URLEncoder.encode(job.get("cascalog.cartodb" +
+                ".sqlCount"), "UTF-8");
+        String params = "q=" + sqlQuery + "&api_key=" + job.get("cascalog" +
+                ".cartodb.apiKey")
                 + "&format=csv";
         return IOUtils.toString(new URL("https://vertnet.cartodb" +
                 ".com/api/v1/sql" + "?" +
@@ -117,8 +119,10 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
                 IOException {
             this.split = split;
             this.job = job;
-            String sqlQuery = URLEncoder.encode(job.get("sql"), "UTF-8");
-            String params = "q=" + sqlQuery + "&api_key=" + job.get("apiKey")
+            String sqlQuery = URLEncoder.encode(job.get("cascalog.cartodb" +
+                    ".sql"), "UTF-8");
+            String params = "q=" + sqlQuery + "&api_key=" + job.get("cascalog" +
+                    ".cartodb.apiKey")
                     + "&format=csv";
             String response = IOUtils.toString(new URL("https://vertnet" +
                     ".cartodb" + ".com/api/v1/sql" + "?" + params), "UTF-8");

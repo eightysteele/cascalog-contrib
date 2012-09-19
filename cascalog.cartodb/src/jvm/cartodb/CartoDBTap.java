@@ -69,10 +69,10 @@ public class CartoDBTap extends SourceTap<JobConf, RecordReader> {
     public void sourceConfInit(FlowProcess<JobConf> process, JobConf conf) {
         FileInputFormat.setInputPaths(conf, "http://" + account + ".cartodb" +
                 ".com");
-        conf.set("account", account);
-        conf.set("apiKey", apiKey);
-        conf.set("sql", sql);
-        conf.set("sqlCount", sqlCount);
+        conf.set("cascalog.cartodb.account", account);
+        conf.set("cascalog.cartodb.apiKey", apiKey);
+        conf.set("cascalog.cartodb.sql", sql);
+        conf.set("cascalog.cartodb.sqlCount", sqlCount);
         super.sourceConfInit(process, conf);
     }
 }

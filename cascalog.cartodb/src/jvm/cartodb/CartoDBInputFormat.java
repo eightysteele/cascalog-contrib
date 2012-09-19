@@ -21,8 +21,8 @@ import java.net.URLEncoder;
  */
 public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
         Text> {
-    private static final Logger LOG = Logger.getLogger(CartoDBInputFormat.class);
-
+    private static final Logger LOG = Logger.getLogger(CartoDBInputFormat
+            .class);
 
     public void configure(JobConf job) {
         job.setInputFormat(CartoDBInputFormat.class);
@@ -113,7 +113,8 @@ public class CartoDBInputFormat implements JobConfigurable, InputFormat<Text,
         private UnmodifiableIterator<String> records;
         private long pos;
 
-        CartoDBRecordReader(CartoDBInputSplit split, JobConf job) throws IOException {
+        CartoDBRecordReader(CartoDBInputSplit split, JobConf job) throws
+                IOException {
             this.split = split;
             this.job = job;
             String sqlQuery = URLEncoder.encode(job.get("sql"), "UTF-8");

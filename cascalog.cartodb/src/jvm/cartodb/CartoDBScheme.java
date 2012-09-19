@@ -7,8 +7,6 @@ import cascading.scheme.SourceCall;
 import cascading.tap.Tap;
 import cascading.tuple.Tuple;
 import com.google.common.base.Splitter;
-import com.twitter.maple.jdbc.TupleRecord;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.RecordReader;
@@ -23,7 +21,6 @@ public class CartoDBScheme
         extends Scheme<JobConf, RecordReader, OutputCollector,
         Object[], Object[]> {
     private static final Logger LOGGER = Logger.getLogger(CartoDBScheme.class);
-
 
     @Override
     public void sink(FlowProcess<JobConf> flowProcess,
@@ -48,7 +45,7 @@ public class CartoDBScheme
             return false;
         }
         Tuple t = new Tuple();
-        for (String x: Splitter.on(",").split(value.toString())) {
+        for (String x : Splitter.on(",").split(value.toString())) {
             t.add(x);
         }
         sourceCall.getIncomingEntry().setTuple(t);
@@ -56,17 +53,18 @@ public class CartoDBScheme
     }
 
     @Override
-    public void sourcePrepare(FlowProcess<JobConf> flowProcess,
-            SourceCall<Object[], RecordReader> sourceCall) {
-        Object[] pair = new Object[] {
-                sourceCall.getInput().createKey(),
-                sourceCall.getInput().createValue()
-        };
-        sourceCall.setContext( pair );
-    }
-    @Override
     public void sourceConfInit(FlowProcess<JobConf> flowProcess, Tap<JobConf,
             RecordReader, OutputCollector> tap, JobConf job) {
         job.setInputFormat(CartoDBInputFormat.class);
+    }
+
+    @Override
+    public void sourcePrepare(FlowProcess<JobConf> flowProcess,
+            SourceCall<Object[], RecordReader> sourceCall) {
+        Object[] pair = new Object[]{
+                sourceCall.getInput().createKey(),
+                sourceCall.getInput().createValue()
+        };
+        sourceCall.setContext(pair);
     }
 }

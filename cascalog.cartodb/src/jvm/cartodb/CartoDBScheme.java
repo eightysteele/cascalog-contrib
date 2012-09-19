@@ -44,10 +44,7 @@ public class CartoDBScheme
         if (!result) {
             return false;
         }
-        Tuple t = new Tuple();
-        for (String x : Splitter.on(",").split(value.toString())) {
-            t.add(x);
-        }
+        Tuple t = new Tuple(value.toString());
         sourceCall.getIncomingEntry().setTuple(t);
         return true;
     }

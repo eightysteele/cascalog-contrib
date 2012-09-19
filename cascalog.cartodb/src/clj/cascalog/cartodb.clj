@@ -6,7 +6,7 @@
 (defn cartodb-tap
   [account api-key sql sql-count]
   (let [tap (CartoDBTap/create (CartoDBScheme.) account api-key sql sql-count)]
-    (cascalog-tap tap stdout)))
+    (cascalog-tap tap (stdout))))
 
 (comment
   (let [account "vertnet"
